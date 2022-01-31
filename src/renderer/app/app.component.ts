@@ -13,7 +13,6 @@ import { Logger } from 'src/renderer/app/classes/logger';
 import { ChangelogModalComponent } from 'src/renderer/app/components/modals/changelog-modal/changelog-modal.component';
 import { SettingsModalComponent } from 'src/renderer/app/components/modals/settings-modal/settings-modal.component';
 import { MainAPI } from 'src/renderer/app/constants/common.constants';
-import { AnalyticsEvents } from 'src/renderer/app/enums/analytics-events.enum';
 import { FocusableInputs } from 'src/renderer/app/enums/ui.enum';
 import { ContextMenuItemPayload } from 'src/renderer/app/models/context-menu.model';
 import { DataSubject } from 'src/renderer/app/models/data.model';
@@ -100,8 +99,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.telemetryService.init().subscribe();
 
     this.analyticsService.init();
-    this.eventsService.analyticsEvents.next(AnalyticsEvents.PAGEVIEW);
-    this.eventsService.analyticsEvents.next(AnalyticsEvents.APPLICATION_START);
+    this.eventsService.analyticsEvents.next({
+      type: 'pageview',
+      pageName: '/'
+    });
 
     this.activeEnvironment$ = this.store.selectActiveEnvironment();
     this.activeView$ = this.store.select('activeView');
@@ -135,8 +136,8 @@ export class AppComponent implements OnInit, AfterViewInit {
             .subscribe();
         }
         break;
-      case 'export':
-        this.exportToClipboard(payload.subject, payload.subjectUUID);
+      case 'clipboard':
+        this.copyToClipboard(payload.subject, payload.subjectUUID);
         break;
       case 'delete':
         if (payload.subject === 'route') {
@@ -169,16 +170,16 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Export an environment to the clipboard
+   * Export an environment/route to the clipboard
    *
    * @param subject
    * @param subjectUUID
    */
-  public exportToClipboard(subject: DataSubject, subjectUUID: string) {
+  public copyToClipboard(subject: DataSubject, subjectUUID: string) {
     if (subject === 'environment') {
-      this.importExportService.exportEnvironmentToClipboard(subjectUUID);
+      this.environmentsService.copyEnvironmentToClipboard(subjectUUID);
     } else if (subject === 'route') {
-      this.importExportService.exportRouteToClipboard(subjectUUID);
+      this.environmentsService.copyRouteToClipboard(subjectUUID);
     }
   }
 

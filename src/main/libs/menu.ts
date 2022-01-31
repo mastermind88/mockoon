@@ -27,6 +27,16 @@ export const createMenu = (mainWindow: BrowserWindow): Menu => {
           }
         },
         {
+          id: 'NEW_ENVIRONMENT_CLIPBOARD',
+          label: 'New environment from clipboard',
+          click: () => {
+            mainWindow.webContents.send(
+              'APP_MENU',
+              'NEW_ENVIRONMENT_CLIPBOARD'
+            );
+          }
+        },
+        {
           label: 'Open environment',
           accelerator: 'CmdOrCtrl+O',
           click: () => {
@@ -94,6 +104,13 @@ export const createMenu = (mainWindow: BrowserWindow): Menu => {
         accelerator: 'Shift+CmdOrCtrl+R',
         click: () => {
           mainWindow.webContents.send('APP_MENU', 'NEW_ROUTE');
+        }
+      },
+      {
+        id: 'NEW_ROUTE_CLIPBOARD',
+        label: 'Add route from clipboard',
+        click: () => {
+          mainWindow.webContents.send('APP_MENU', 'NEW_ROUTE_CLIPBOARD');
         }
       },
       {
@@ -180,57 +197,18 @@ export const createMenu = (mainWindow: BrowserWindow): Menu => {
     label: 'Import/export',
     submenu: [
       {
-        label: "Mockoon's format",
-        submenu: [
-          {
-            id: 'IMPORT_CLIPBOARD',
-            label: 'Import from clipboard',
-            click: () => {
-              mainWindow.webContents.send('APP_MENU', 'IMPORT_CLIPBOARD');
-            }
-          },
-          {
-            id: 'IMPORT_FILE',
-            label: 'Import from a file (JSON)',
-            click: () => {
-              mainWindow.webContents.send('APP_MENU', 'IMPORT_FILE');
-            }
-          },
-          {
-            id: 'EXPORT_FILE',
-            label: 'Export all environments to a file (JSON)',
-            click: () => {
-              mainWindow.webContents.send('APP_MENU', 'EXPORT_FILE');
-            }
-          },
-          {
-            id: 'EXPORT_FILE_SELECTED',
-            label: 'Export current environment to a file (JSON)',
-            click: () => {
-              mainWindow.webContents.send('APP_MENU', 'EXPORT_FILE_SELECTED');
-            }
-          }
-        ]
+        id: 'IMPORT_OPENAPI_FILE',
+        label: 'Import Swagger v2/OpenAPI v3 (JSON or YAML)',
+        click: () => {
+          mainWindow.webContents.send('APP_MENU', 'IMPORT_OPENAPI_FILE');
+        }
       },
-      { type: 'separator' },
       {
-        label: 'Swagger/OpenAPI',
-        submenu: [
-          {
-            id: 'IMPORT_OPENAPI_FILE',
-            label: 'Import Swagger v2/OpenAPI v3 (JSON or YAML)',
-            click: () => {
-              mainWindow.webContents.send('APP_MENU', 'IMPORT_OPENAPI_FILE');
-            }
-          },
-          {
-            id: 'EXPORT_OPENAPI_FILE',
-            label: 'Export current environment to OpenAPI v3 (JSON)',
-            click: () => {
-              mainWindow.webContents.send('APP_MENU', 'EXPORT_OPENAPI_FILE');
-            }
-          }
-        ]
+        id: 'EXPORT_OPENAPI_FILE',
+        label: 'Export current environment to OpenAPI v3 (JSON)',
+        click: () => {
+          mainWindow.webContents.send('APP_MENU', 'EXPORT_OPENAPI_FILE');
+        }
       }
     ]
   });
@@ -320,8 +298,6 @@ export const toggleEnvironmentMenuItems = (state: boolean) => {
     'NEXT_ENVIRONMENT',
     'PREVIOUS_ROUTE',
     'NEXT_ROUTE',
-    'EXPORT_FILE',
-    'EXPORT_FILE_SELECTED',
     'EXPORT_OPENAPI_FILE'
   ].forEach((id) => {
     const menuItem = menu?.getMenuItemById(id);
